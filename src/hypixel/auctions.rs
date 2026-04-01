@@ -1,13 +1,4 @@
-pub struct AuctionsHandler {
-    client: reqwest::Client,
-    base_url: reqwest::Url,
-}
+pub mod handler;
+pub mod models;
 
-impl AuctionsHandler {
-    pub fn new(client: reqwest::Client, base_url: reqwest::Url) -> Self {
-        Self { client, base_url }
-    }
-
-    // TODO: add the methods here
-    // e.g. pub async fn get_items() { ... }
-}
+pub use handler::AuctionsHandler;
