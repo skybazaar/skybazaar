@@ -1,40 +1,51 @@
 use anyhow::Result;
 
 use reqwest::{
-    ClientBuilder,
-    header::{self, HeaderMap, HeaderName, HeaderValue},
+    ClientBuilder, Url,
+    header::{HeaderMap, HeaderValue},
 };
+use serde::Deserialize;
 
-use crate::hypixel::{auctions::AuctionsHandler, bazaar::BazaarHandler};
+use crate::hypixel::{auctions::AuctionsHandler, bazaar::handler::BazaarHandler};
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HypixelResponse<T> {
+    pub success: bool,
+    pub last_updated: u64,
+    #[serde(alias = "products")]
+    pub data: T,
+}
 
 pub struct HypixelClient {
-    client: reqwest::Client,
-    base_url: String,
-    api_key: String,
     pub bazaar: BazaarHandler,
     pub auctions: AuctionsHandler,
 }
 
 impl HypixelClient {
-    pub fn new(api_key: &str, user_agent: &str) -> Result<Self> {
+    pub fn new(api_key: Option<&str>, user_agent: &str) -> Result<Self> {
         let mut headers = HeaderMap::new();
 
-        let mut api_key_header = HeaderValue::from_str(api_key)?;
-        api_key_header.set_sensitive(true);
+        match api_key {
+            Some(key) => {
+                let mut api_key_header = HeaderValue::from_str(key)?;
+                api_key_header.set_sensitive(true);
 
-        headers.insert("API-Key", api_key_header);
+                headers.insert("API-Key", api_key_header);
+            }
+            None => (),
+        }
 
         let client = ClientBuilder::new()
             .default_headers(headers)
             .user_agent(user_agent)
             .build()?;
 
+        let base_url = Url::parse("https://api.hypixel.net/v2/skyblock/")?;
+
         Ok(Self {
-            client: client.clone(),
-            base_url: "https://api.hypixel.net/v2/skyblock".to_string(),
-            api_key: api_key.to_string(),
-            bazaar: BazaarHandler::new(client.clone()),
-            auctions: AuctionsHandler::new(client),
+            bazaar: BazaarHandler::new(client.clone(), base_url.clone()),
+            auctions: AuctionsHandler::new(client, base_url),
         })
     }
 }
