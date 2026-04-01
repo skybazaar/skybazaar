@@ -11,8 +11,8 @@ async fn main() -> anyhow::Result<()> {
     for auction in page0.auctions.iter() {
         println!(
             "{} | price={:.0} | bin={}",
-            auction.item_name,
-            auction.starting_bid,
+            auction.item_name.as_deref().unwrap_or("<missing item_name>"),
+            auction.starting_bid.unwrap_or(0.0),
             auction.bin.unwrap_or(false)
         );
     }

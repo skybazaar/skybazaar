@@ -3,11 +3,10 @@ use serde::Deserialize;
 #[derive(Debug, Clone, Deserialize)]
 pub struct AuctionApiModel {
     pub uuid: String,
-    #[serde(default, alias = "itemName")]
-    pub item_name: String,
-    #[serde(default, alias = "startingBid")]
-    pub starting_bid: f64,
-    #[serde(default)]
+    #[serde(alias = "itemName")]
+    pub item_name: Option<String>,
+    #[serde(alias = "startingBid")]
+    pub starting_bid: Option<f64>,
     pub bin: Option<bool>,
 }
 
