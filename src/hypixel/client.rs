@@ -2,7 +2,7 @@ use anyhow::Result;
 
 use reqwest::{
     ClientBuilder,
-    header::{HeaderMap, HeaderValue},
+    header::{self, HeaderMap, HeaderName, HeaderValue},
 };
 
 use crate::hypixel::{auctions::AuctionsHandler, bazaar::BazaarHandler};
@@ -17,10 +17,12 @@ pub struct HypixelClient {
 
 impl HypixelClient {
     pub fn new(api_key: &str, user_agent: &str) -> Result<Self> {
-        let headers = HeaderMap::new();
+        let mut headers = HeaderMap::new();
 
         let mut api_key_header = HeaderValue::from_str(api_key)?;
         api_key_header.set_sensitive(true);
+
+        headers.insert("API-Key", api_key_header);
 
         let client = ClientBuilder::new()
             .default_headers(headers)
