@@ -1,5 +1,4 @@
 use anyhow::Result;
-
 use reqwest::{
     ClientBuilder, Url,
     header::{HeaderMap, HeaderValue},
