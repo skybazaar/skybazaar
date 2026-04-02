@@ -2,8 +2,8 @@ use crate::hypixel::client::HypixelResponse;
 use serde::Deserialize;
 use std::collections::HashMap;
 
-type Price = f64;
-type Amount = u64;
+pub type Price = f64;
+pub type Amount = u64;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
